@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 venv/
 .env
+
+# Présentations et médias volumineux
+/static/files/
