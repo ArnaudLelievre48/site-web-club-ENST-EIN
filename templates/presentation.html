@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ presentation.title }} · Club ENST'EIN{% endblock %}
+{% block content %}
+    <article class="presentation">
+        <a class="back-link" href="{{ url_for('home', page=return_page) }}">← Retour aux présentations</a>
+        <header class="presentation-header">
+            <h1>{{ presentation.title }}</h1>
+            <p>{{ presentation.speaker }} · <time datetime="{{ presentation.date.isoformat() }}">{{ presentation.date_label }}</time></p>
+            <p class="tags">{{ presentation.tags | join(' · ') }}</p>
+        </header>
+        <div class="presentation-description">
+            {% for paragraph in presentation.description.split('\n\n') %}
+            <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="presentation-media{% if presentation.video_embed %} has-video{% endif %}">
+        <section class="media-panel slides-section" aria-labelledby="slides-title">
+            <h2 id="slides-title">Les slides</h2>
+            {% if viewer %}
+            <nav class="viewer-links" aria-label="Format des slides">
+                {% for support in viewers %}
+                <a href="{{ url_for('presentation_detail', academic_year=presentation.academic_year, slug=presentation.slug, format=support.filename.rsplit('.', 1)[-1]) }}#slides-title"{% if support == viewer %} aria-current="true"{% endif %}>{{ 'PDF' if support.filename.endswith('.pdf') else 'HTML' }}</a>
+                {% endfor %}
+                <a href="{{ url_for('static', filename=viewer.filename) }}" target="_blank" rel="noopener">Ouvrir dans un onglet ↗</a>
+            </nav>
+            <iframe class="slides-frame" src="{{ url_for('static', filename=viewer.filename) }}" title="Slides : {{ presentation.title }}" allowfullscreen></iframe>
+            {% else %}
+            <div></div>
+            <p>Les slides sont disponibles au téléchargement au format PowerPoint. Une version PDF ou HTML permettra aussi de les parcourir ici.</p>
+            {% endif %}
+        </section>
+
+        {% if presentation.video_embed %}
+        <section class="media-panel" aria-labelledby="video-title">
+            <h2 id="video-title">La conférence en vidéo</h2>
+            <nav class="viewer-links" aria-label="Lien de la vidéo"><a href="{{ presentation.video }}">Voir sur YouTube ↗</a></nav>
+            <iframe class="video-frame" src="{{ presentation.video_embed }}" title="Vidéo : {{ presentation.title }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </section>
+        {% endif %}
+        </div>
+        {% if presentation.video and not presentation.video_embed %}
+        <p><a href="{{ presentation.video }}">Voir la vidéo de la conférence ↗</a></p>
+        {% endif %}
+
+        {% if presentation.supports %}
+        <section aria-labelledby="downloads-title">
+            <h2 id="downloads-title">Télécharger les fichiers</h2>
+            <div class="downloads">
+                {% for support in presentation.supports %}
+                <a class="download-button" href="{{ url_for('static', filename=support.filename) }}" download>↓ {{ support.filename.rsplit('/', 1)[-1] }}</a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </article>
+{% endblock %}

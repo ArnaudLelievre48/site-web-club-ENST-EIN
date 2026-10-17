@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+                <h1 class="title">Club ENST'EIN</h1>
+                <div class="cards-wrapper">
+                    {% if page > 1 %}
+                    <a class="move-left" href="{{ url_for('home', page=page - 1) }}" aria-label="Présentations précédentes">&lt;</a>
+                    {% else %}
+                    <span class="move-left disabled" aria-hidden="true">&lt;</span>
+                    {% endif %}
+                    <div class="cards">
+                        {% for presentation in presentations %}
+                        <a class="card" href="{{ url_for('presentation_detail', academic_year=presentation.academic_year, slug=presentation.slug) }}" aria-labelledby="title-{{ loop.index }}">
+                            <div class="card-thumbnail">
+                                {% if presentation.thumbnail %}
+                                <img src="{{ presentation.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">
+                                {% endif %}
+                            </div>
+                            <div class="card-title">
+                                <h2 id="title-{{ loop.index }}">{{ presentation.title }}</h2>
+                                <p>{{ presentation.speaker }}<br><time datetime="{{ presentation.date.isoformat() }}">{{ presentation.date_label }}</time></p>
+                            </div>
+                            <div class="card-info">
+                                <p>{{ presentation.summary }}</p>
+                                <p class="tags">{{ presentation.tags | join(' · ') }}</p>
+                                <span class="card-open">Ouvrir la présentation →</span>
+                            </div>
+                        </a>
+                        {% else %}
+                        <p>Aucune présentation pour le moment.</p>
+                        {% endfor %}
+                    </div>
+                    {% if page < pages %}
+                    <a class="move-right" href="{{ url_for('home', page=page + 1) }}" aria-label="Présentations suivantes">&gt;</a>
+                    {% else %}
+                    <span class="move-right disabled" aria-hidden="true">&gt;</span>
+                    {% endif %}
+                </div>
+{% endblock %}

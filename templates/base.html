@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Club ENST'EIN{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="icon" href="{{ url_for('static', filename='club-enst-ein-logo.png') }}">
+    </head>
+    <body>
+        <aside class="left-panel" aria-label="Le club">
+            <a class="logo" href="{{ url_for('home') }}" aria-label="Accueil">
+                <img src="{{ url_for('static', filename='club-enst-ein-logo.png') }}" alt="Logo du club ENST'EIN">
+            </a>
+            <nav class="links" aria-label="Réseaux et contact">
+                <a href="https://www.youtube.com/@clubENSTEIN" aria-label="YouTube"><img src="{{ url_for('static', filename='youtube.png') }}" alt=""></a>
+                <a href="https://www.instagram.com/enst__ein" aria-label="Instagram"><img src="{{ url_for('static', filename='instagram.png') }}" alt=""></a>
+                <a href="mailto:ENSTein.brest@ensta.fr" aria-label="Nous écrire"><img src="{{ url_for('static', filename='mail.png') }}" alt=""></a>
+            </nav>
+        </aside>
+        <main class="main">
+            <div class="main-inner">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </body>
+</html>
