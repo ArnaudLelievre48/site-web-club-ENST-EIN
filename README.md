@@ -18,7 +18,10 @@ Ouvrir http://127.0.0.1:5000.
 Le catalogue Python est chargé depuis les fichiers JSON à chaque requête, sans
 serveur de base de données ni étape d'import. Les cartes sont rendues par une
 boucle Jinja dans `templates/index.html`. Les flèches passent d'une page à l'autre
-(trois présentations par page), sans JavaScript.
+(trois présentations par page), sans JavaScript. Jusqu'à 1 000 px de large,
+toutes les cartes sont visibles en défilement vertical, sans flèches.
+La barre du club est en haut jusqu'au rapport largeur/hauteur 4:3, puis sur
+le côté au-delà. En paysage peu haut, ses icônes sont plus petites.
 
 Créer un dossier `static/files/<année-universitaire>/<nom-de-la-conférence>/`
 avec un fichier `presentation.json` :
@@ -57,6 +60,11 @@ Sans `description`, le résumé est utilisé. Séparer les paragraphes par `\n\n
 La navigation utilise les routes Flask, sans JavaScript.
 
 Le lecteur affiche les PDF et les HTML dans un iframe (HTML par défaut s'il existe).
+Les PDF utilisent un petit lecteur PDF.js : chaque slide s'ajuste à la largeur
+et à la hauteur disponibles, y compris après rotation de l'écran. Les modules
+PDF.js (version 6.4.299) sont chargés depuis jsDelivr ; ils nécessitent une
+connexion Internet. Le lien vers le PDF original reste disponible si le lecteur
+ne peut pas se charger ou si JavaScript est désactivé.
 Avec une vidéo YouTube, les deux lecteurs sont côte à côte sur ordinateur et
 empilés sur mobile.
 Le navigateur ne lit pas directement les PowerPoint : conserver `slides.pptx`

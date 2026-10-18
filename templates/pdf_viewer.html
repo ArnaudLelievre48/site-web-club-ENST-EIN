@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ presentation.title }} · PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='pdf-viewer.css') }}">
+    <script type="module" src="{{ url_for('static', filename='pdf-viewer.js') }}"></script>
+</head>
+<body data-pdf-url="{{ url_for('static', filename=pdf.filename) }}">
+    <nav aria-label="Navigation des slides">
+        <button id="previous" type="button" disabled aria-label="Slide précédente">←</button>
+        <output id="page-number" aria-live="polite">Chargement…</output>
+        <button id="next" type="button" disabled aria-label="Slide suivante">→</button>
+    </nav>
+    <main id="slide" aria-busy="true">
+        <canvas id="canvas" role="img" aria-label="Slide du PDF"></canvas>
+    </main>
+    <p id="error" role="status" hidden>Le lecteur n'a pas pu charger le PDF.</p>
+    <a class="original" href="{{ url_for('static', filename=pdf.filename) }}" target="_blank" rel="noopener">Ouvrir le PDF ↗</a>
+    <noscript><p>Activez JavaScript pour utiliser le lecteur, ou ouvrez directement le PDF.</p></noscript>
+</body>
+</html>

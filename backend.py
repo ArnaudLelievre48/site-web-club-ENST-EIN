@@ -104,8 +104,8 @@ def home():
     page = min(max(request.args.get("page", 1, type=int), 1), pages)
     start = (page - 1) * per_page
     return render_template(
-        "index.html", presentations=catalogue[start:start + per_page],
-        page=page, pages=pages,
+        "index.html", presentations=catalogue,
+        page=page, pages=pages, start=start, end=start + per_page,
     )
 
 
@@ -132,5 +132,16 @@ def presentation_detail(academic_year, slug):
     abort(404)
 
 
+@app.get("/presentations/<academic_year>/<slug>/pdf")
+def pdf_viewer(academic_year, slug):
+    for presentation in load_presentations():
+        if presentation["academic_year"] == academic_year and presentation["slug"] == slug:
+            for support in presentation["supports"]:
+                if (support["filename"].endswith(".pdf")
+                        and support["filename"].rsplit("/", 1)[-1] == request.args.get("filename")):
+                    return render_template("pdf_viewer.html", presentation=presentation, pdf=support)
+    abort(404)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

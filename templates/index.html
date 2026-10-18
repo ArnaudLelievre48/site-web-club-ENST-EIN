@@ -9,7 +9,7 @@
                     {% endif %}
                     <div class="cards">
                         {% for presentation in presentations %}
-                        <a class="card" href="{{ url_for('presentation_detail', academic_year=presentation.academic_year, slug=presentation.slug) }}" aria-labelledby="title-{{ loop.index }}">
+                        <a class="card{% if not (start <= loop.index0 < end) %} outside-page{% endif %}" href="{{ url_for('presentation_detail', academic_year=presentation.academic_year, slug=presentation.slug) }}" aria-labelledby="title-{{ loop.index }}">
                             <div class="card-thumbnail">
                                 {% if presentation.thumbnail %}
                                 <img src="{{ presentation.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">

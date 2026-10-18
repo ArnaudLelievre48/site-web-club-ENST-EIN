@@ -24,7 +24,7 @@
                 {% endfor %}
                 <a href="{{ url_for('static', filename=viewer.filename) }}" target="_blank" rel="noopener">Ouvrir dans un onglet ↗</a>
             </nav>
-            <iframe class="slides-frame" src="{{ url_for('static', filename=viewer.filename) }}" title="Slides : {{ presentation.title }}" allowfullscreen></iframe>
+            <iframe class="slides-frame" src="{% if viewer.filename.endswith('.pdf') %}{{ url_for('pdf_viewer', academic_year=presentation.academic_year, slug=presentation.slug, filename=viewer.filename.rsplit('/', 1)[-1]) }}{% else %}{{ url_for('static', filename=viewer.filename) }}{% endif %}" title="Slides : {{ presentation.title }}" allowfullscreen></iframe>
             {% else %}
             <div></div>
             <p>Les slides sont disponibles au téléchargement au format PowerPoint. Une version PDF ou HTML permettra aussi de les parcourir ici.</p>

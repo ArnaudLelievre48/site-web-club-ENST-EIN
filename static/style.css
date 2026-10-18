@@ -142,18 +142,29 @@ a:focus-visible, .card:focus-visible {
     transition: transform .3s;
 }
 
+.card.outside-page { display: none; }
+
 .card:hover, .card:focus-within { transform: scale(.97); }
 
 .card-thumbnail {
+    position: relative;
     width: 100%;
     height: 40vh;
-    background: var(--bg);
+    background: #000000;
     border-radius: 2vw;
     overflow: hidden;
     transition: height .3s;
 }
 
-.card-thumbnail img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.card-thumbnail img {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: auto;
+    transform: translateY(-50%);
+}
 .card:hover .card-thumbnail, .card:focus-within .card-thumbnail { height: 26vh; }
 
 .card-title { color: var(--fontcolor-ac); padding: 14px 0 8px; }
@@ -183,7 +194,8 @@ a:focus-visible, .card:focus-visible {
 .card-supports a { text-underline-offset: 3px; }
 .card-supports a:hover { color: var(--fontcolor-fg); }
 
-@media (max-width: 800px) {
+/* La position de la barre dépend de la forme de l'écran, pas de l'appareil. */
+@media (max-aspect-ratio: 4/3) {
     body { flex-direction: column; }
     .left-panel { width: 100%; height: auto; flex-direction: row; padding: 12px 18px; }
     .logo { width: 58px; height: 58px; margin: 0; }
@@ -191,13 +203,33 @@ a:focus-visible, .card:focus-visible {
     .links a { width: 42px; height: 42px; margin: 0; }
     .main { width: 100%; height: auto; flex: 1; padding: 12px; }
     .main-inner { border-radius: 20px; }
-    .title { min-height: auto; margin: 28px 0; }
-    .cards-wrapper { align-items: flex-start; width: 100%; }
-    .move-left, .move-right { position: sticky; top: 20px; }
-    .cards { flex-direction: column; gap: 28px; }
-    .card { width: 100%; flex-basis: auto; }
-    .card-thumbnail, .card:hover .card-thumbnail, .card:focus-within .card-thumbnail { height: 230px; border-radius: 18px; }
+}
+
+/* Barre latérale compacte pour les téléphones en paysage. */
+@media (aspect-ratio > 4/3) and (max-height: 600px) {
+    .left-panel { width: 68px; padding: 8px; }
+    .logo { width: 48px; height: 48px; margin: 0; }
+    .links { gap: 8px; }
+    .links a { width: 42px; height: 42px; margin: 0; }
+    .main { width: calc(100% - 68px); padding: 8px; }
+    .main-inner { border-radius: 16px; }
+    .title { min-height: auto; margin: 16px 0; }
+}
+
+/* Sur les petits écrans, tout le catalogue se parcourt par défilement. */
+@media (max-width: 1000px) {
+    .title { min-height: auto; margin: 24px 0; }
+    .cards-wrapper { align-items: flex-start; width: 100%; padding: 0 20px 24px; }
+    .move-left, .move-right { display: none; }
+    .cards { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
+    .card, .card.outside-page { display: flex; width: 100%; }
+    .card-thumbnail, .card:hover .card-thumbnail, .card:focus-within .card-thumbnail { height: auto; aspect-ratio: 16 / 9; border-radius: 18px; }
+    .card:hover, .card:focus-within { transform: none; }
     .card-info { max-height: none; opacity: 1; visibility: visible; }
+}
+
+@media (max-width: 600px) {
+    .cards { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (hover: none) {
@@ -227,9 +259,18 @@ a.card { text-decoration: none; }
 .viewer-links { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 14px; font-size: 14px; }
 .viewer-links a { color: var(--fontcolor-ac); text-underline-offset: 4px; }
 .viewer-links a[aria-current] { color: var(--fontcolor-fg); font-weight: bold; }
-.slides-frame, .video-frame { display: block; width: 100%; border: 0; border-radius: 10px; background: var(--bg); }
-.slides-frame { height: 70vh; min-height: 360px; }
-.video-frame { aspect-ratio: 16 / 9; }
+.slides-frame, .video-frame {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    align-self: start;
+    border: 0;
+    border-radius: 10px;
+    background: var(--bg);
+}
+.slides-frame { aspect-ratio: 4 / 3; }
 .presentation-media { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px 24px; }
 .presentation-media.has-video { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .presentation .media-panel {
@@ -240,11 +281,8 @@ a.card { text-decoration: none; }
     grid-row: span 3;
 }
 .media-panel h2, .media-panel .viewer-links { margin: 0; }
-.presentation-media.has-video iframe { height: clamp(280px, 30vw, 520px); min-height: 0; }
 @media (max-width: 800px) {
     .presentation-media.has-video { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
-    .presentation-media.has-video .slides-frame { height: 60vh; }
-    .presentation-media.has-video .video-frame { height: auto; }
 }
 .downloads { display: flex; flex-wrap: wrap; gap: 12px; }
 .download-button { padding: 10px 16px; border: 1px solid var(--fontcolor-ac); border-radius: 8px; text-decoration: none; font-size: 14px; overflow-wrap: anywhere; }
