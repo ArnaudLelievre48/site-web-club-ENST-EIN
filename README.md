@@ -18,8 +18,12 @@ Ouvrir http://127.0.0.1:5000.
 Le catalogue Python est chargé depuis les fichiers JSON à chaque requête, sans
 serveur de base de données ni étape d'import. Les cartes sont rendues par une
 boucle Jinja dans `templates/index.html`. Les flèches passent d'une page à l'autre
-(trois présentations par page), sans JavaScript. Jusqu'à 1 000 px de large,
-toutes les cartes sont visibles en défilement vertical, sans flèches.
+(trois présentations par page), sans JavaScript. Avec JavaScript, le carrousel
+glisse horizontalement sur ordinateur. Jusqu'à 1 000 px de large, il glisse
+verticalement avec une seule carte active et un aperçu flouté des cartes
+voisines. Les flèches haut/bas, le balayage tactile et les touches haut/bas
+permettent de changer de carte. L'URL conserve la carte sélectionnée (`card`).
+Sans JavaScript, toutes les cartes restent visibles sur petit écran.
 La barre du club est en haut jusqu'au rapport largeur/hauteur 4:3, puis sur
 le côté au-delà. En paysage peu haut, ses icônes sont plus petites.
 

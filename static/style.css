@@ -223,7 +223,7 @@ a:focus-visible, .card:focus-visible {
     .title { min-height: auto; margin: 16px 0; }
 }
 
-/* Sur les petits écrans, tout le catalogue se parcourt par défilement. */
+/* Sans JavaScript, le catalogue reste accessible par défilement. */
 @media (max-width: 1000px) {
     .title { min-height: auto; margin: 24px 0; }
     .cards-wrapper { align-items: flex-start; width: 100%; padding: 0 20px 24px; }
@@ -302,9 +302,31 @@ a.card { text-decoration: none; }
         mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
     }
     .carousel-ready .cards { width: 90%; margin-left: 5%; transition: transform .4s ease; }
-    .carousel-ready .card { transition: transform .3s, filter .4s, opacity .4s; }
-    .carousel-ready .card.carousel-preview { filter: blur(4px); opacity: .45; pointer-events: none; }
     .carousel-ready .card.outside-page { display: flex; }
+}
+.carousel-ready .cards { transition: transform .4s ease; }
+.carousel-ready .card { transition: transform .3s, filter .4s, opacity .4s; }
+.carousel-ready .card.carousel-preview { filter: blur(4px); opacity: .45; pointer-events: none; }
+@media (max-width: 1000px) {
+    .carousel-ready.cards-wrapper { flex-direction: column; align-items: center; gap: 4px; }
+    .carousel-ready .move-left, .carousel-ready .move-right {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        font-size: 32px;
+        transform: rotate(90deg);
+    }
+    .carousel-ready .cards-viewport {
+        flex-shrink: 0;
+        overflow: hidden;
+        touch-action: pan-x pinch-zoom;
+        -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+        mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+    }
+    .carousel-ready .cards { display: flex; flex-direction: column; gap: 24px; }
+    .carousel-ready .card { flex: none; }
 }
 @media (prefers-reduced-motion: reduce) { .carousel-ready .cards { transition: none; } }
 
