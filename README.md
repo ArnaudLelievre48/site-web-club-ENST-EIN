@@ -13,6 +13,21 @@ flask --app backend run --debug
 
 Ouvrir http://127.0.0.1:5000.
 
+## Référencement
+
+Les routes `/robots.txt` et `/sitemap.xml` sont générées automatiquement. Le
+sitemap contient l'accueil et les pages des conférences publiées. Pour utiliser
+l'adresse publique officielle, définir la variable d'environnement `SITE_URL`
+avant de lancer Flask, par exemple :
+
+```sh
+export SITE_URL=https://exemple.fr
+```
+
+Sans cette configuration, les URL utilisent l'adresse de la requête reçue par
+Flask ; en production, configurer `SITE_URL` avec le domaine et le protocole
+publics, notamment si le site est derrière un proxy.
+
 ## Ajouter une conférence
 
 Le catalogue Python est chargé depuis les fichiers JSON à chaque requête, sans

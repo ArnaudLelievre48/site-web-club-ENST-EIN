@@ -1,17 +1,20 @@
 """Catalogue du club, construit depuis les métadonnées dans static/files."""
 
 import json
+import os
 import re
 import subprocess
 import unicodedata
 from tempfile import TemporaryDirectory
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, urljoin, urlsplit
+from xml.etree import ElementTree
 
 from flask import Flask, abort, make_response, render_template, request, url_for
 
 app = Flask(__name__)
+app.config["SITE_URL"] = os.environ.get("SITE_URL", "")
 FILES_DIR = Path(app.static_folder) / "files"
 MONTHS = (
     "janvier", "février", "mars", "avril", "mai", "juin",
@@ -32,6 +35,40 @@ DOWNLOAD_EXTENSIONS = {
     ".pdf", ".ppt", ".pptx", ".odp", ".html", ".mp4", ".webm", ".zip",
     ".txt", ".csv", ".ipynb", ".py", ".doc", ".docx", ".odt", ".xls", ".xlsx", ".ods",
 }
+
+
+def public_url(path):
+    """Construit une URL absolue à partir de l'adresse publique configurée."""
+    base = app.config["SITE_URL"] or request.url_root
+    return urljoin(base.rstrip("/") + "/", path.lstrip("/"))
+
+
+@app.get("/robots.txt")
+def robots():
+    return app.response_class(
+        f"User-agent: *\nAllow: /\n\nSitemap: {public_url(url_for('sitemap'))}\n",
+        mimetype="text/plain",
+    )
+
+
+@app.get("/sitemap.xml")
+def sitemap():
+    namespace = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    ElementTree.register_namespace("", namespace)
+    root = ElementTree.Element(f"{{{namespace}}}urlset")
+    paths = [url_for("home")]
+    paths.extend(
+        url_for("presentation_detail", academic_year=presentation["academic_year"],
+                slug=presentation["slug"])
+        for presentation in load_presentations()
+    )
+    for path in paths:
+        entry = ElementTree.SubElement(root, f"{{{namespace}}}url")
+        ElementTree.SubElement(entry, f"{{{namespace}}}loc").text = public_url(path)
+    return app.response_class(
+        ElementTree.tostring(root, encoding="utf-8", xml_declaration=True),
+        mimetype="application/xml",
+    )
 
 
 def search_text(value):
