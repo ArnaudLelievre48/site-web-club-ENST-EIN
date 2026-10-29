@@ -23,6 +23,8 @@ SUPPORTS = (
     ("slides.pdf", "PDF", True),
     ("slides.pptx", "PowerPoint", True),
     ("instagram.mp4", "Vidéo de présentation", False),
+    ("slides.tex", "Code LaTeX de la présentation", False),
+    ("sources.zip", "Ensemble de fichiers source de la présentation", False),
 )
 
 
