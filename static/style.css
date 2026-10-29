@@ -32,7 +32,7 @@ a:focus-visible, .card:focus-visible {
 }
 
 .left-panel {
-    width: 10vw;
+    width: clamp(88px, min(7vw, 12vh), 160px);
     height: 100%;
     flex-shrink: 0;
     display: flex;
@@ -41,9 +41,9 @@ a:focus-visible, .card:focus-visible {
 }
 
 .logo {
-    width: 8vw;
-    height: 8vw;
-    margin: 2vh 0 2vh 2vw;
+    width: clamp(56px, min(4.5vw, 8vh), 112px);
+    height: clamp(56px, min(4.5vw, 8vh), 112px);
+    margin: 20px 0;
 }
 
 .logo img { width: 100%; height: 100%; border-radius: 50%; transition: .3s;}
@@ -55,27 +55,28 @@ a:focus-visible, .card:focus-visible {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: clamp(14px, 1.5vh, 24px);
 }
 
 .links a {
-    width: 8vw;
-    height: 8vw;
-    margin: 2vh 0 2vh 2vw;
+    width: clamp(42px, min(3.5vw, 6vh), 84px);
+    height: clamp(42px, min(3.5vw, 6vh), 84px);
+    margin: 0;
     border-radius: 50%;
     transition: transform .3s;
 }
 
-.links a:hover { transform: scale(.9); }
+.links a:hover { transform: translateY(-2px); }
 .links img {
     margin: 10%;
     width: 80%;
     height: 80%;
     object-fit: contain;
-    filter: drop-shadow(0 0 10px var(--ac));
+    opacity: .8;
 }
 
 .main {
-    width: 90vw;
+    width: calc(100% - clamp(88px, min(7vw, 12vh), 160px));
     height: 100%;
     min-height: 0;
     min-width: 0;
@@ -126,11 +127,13 @@ a:focus-visible, .card:focus-visible {
 
 .disabled { opacity: .2; }
 
+.cards-viewport { width: 80%; height: 60vh; overflow-x: hidden; overflow-y: auto; }
+
 .cards {
-    width: 80%;
+    width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     gap: 3%;
 }
 
@@ -153,7 +156,11 @@ a:focus-visible, .card:focus-visible {
     background: #000000;
     border-radius: 2vw;
     overflow: hidden;
-    transition: height .3s;
+    transition: .3s;
+}
+
+.card:hover .card-thumbnail {
+    height: 30vh;
 }
 
 .card-thumbnail img {
@@ -165,7 +172,7 @@ a:focus-visible, .card:focus-visible {
     height: auto;
     transform: translateY(-50%);
 }
-.card:hover .card-thumbnail, .card:focus-within .card-thumbnail { height: 26vh; }
+
 
 .card-title { color: var(--fontcolor-ac); padding: 14px 0 8px; }
 .card-title h2 { margin: 0; font-size: clamp(16px, min(2vw, 2vh), 24px); line-height: 1.4; }
@@ -221,6 +228,7 @@ a:focus-visible, .card:focus-visible {
     .title { min-height: auto; margin: 24px 0; }
     .cards-wrapper { align-items: flex-start; width: 100%; padding: 0 20px 24px; }
     .move-left, .move-right { display: none; }
+    .cards-viewport { width: 100%; height: auto; overflow: visible; }
     .cards { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
     .card, .card.outside-page { display: flex; width: 100%; }
     .card-thumbnail, .card:hover .card-thumbnail, .card:focus-within .card-thumbnail { height: auto; aspect-ratio: 16 / 9; border-radius: 18px; }
@@ -287,3 +295,51 @@ a.card { text-decoration: none; }
 .downloads { display: flex; flex-wrap: wrap; gap: 12px; }
 .download-button { padding: 10px 16px; border: 1px solid var(--fontcolor-ac); border-radius: 8px; text-decoration: none; font-size: 14px; overflow-wrap: anywhere; }
 .download-button:hover { background: var(--bg); }
+
+@media (min-width: 1001px) {
+    .carousel-ready .cards-viewport {
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+        mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+    }
+    .carousel-ready .cards { width: 90%; margin-left: 5%; transition: transform .4s ease; }
+    .carousel-ready .card { transition: transform .3s, filter .4s, opacity .4s; }
+    .carousel-ready .card.carousel-preview { filter: blur(4px); opacity: .45; pointer-events: none; }
+    .carousel-ready .card.outside-page { display: flex; }
+}
+@media (prefers-reduced-motion: reduce) { .carousel-ready .cards { transition: none; } }
+
+/* Catalogue de fichiers : dix lignes au maximum, puis défilement. */
+.file-library { width: calc(100% - 6vw); margin: 0 0 40px; }
+.file-library-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.file-library h2 { margin: 0; font-size: clamp(22px, 2vw, 30px); }
+.file-search { position: relative; width: min(100%, 460px); }
+.file-search label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--fontcolor-ac); }
+.file-search-controls { display: flex; gap: 8px; }
+.file-search input[type="search"] { min-width: 0; flex: 1; border: 1px solid #90abd640; border-radius: 10px; padding: 12px; background: var(--bg); color: var(--fontcolor-fg); font: inherit; font-size: 14px; }
+.file-search input::placeholder { color: var(--fontcolor-ac); opacity: .8; }
+.file-search button { border: 1px solid #90abd640; border-radius: 10px; padding: 10px 14px; background: transparent; color: var(--fontcolor-fg); font: inherit; font-size: 13px; cursor: pointer; }
+.file-search button:hover { background: var(--bg); }
+.file-search .htmx-indicator { position: absolute; right: 0; top: 100%; margin-top: 4px; font-size: 12px; color: var(--fontcolor-ac); visibility: hidden; }
+.file-search .htmx-indicator.htmx-request { visibility: visible; }
+.file-count { color: var(--fontcolor-ac); font-size: 13px; margin: 24px 0 12px; }
+.file-list { --file-row-height: 76px; max-height: calc(10 * var(--file-row-height)); overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; list-style: none; padding: 0; margin: 0; border-radius: 12px; background: var(--bg); }
+.file-entry { height: var(--file-row-height); display: flex; align-items: center; gap: 16px; padding: 12px 18px; border-bottom: 1px solid #90abd61a; text-decoration: none; }
+.file-entry:hover, .file-entry:focus-visible { background: #90abd610; }
+.file-entry:focus-visible { outline-offset: -3px; }
+.file-format { flex: 0 0 52px; color: var(--fontcolor-ac); font-size: 11px; font-weight: bold; letter-spacing: .05em; }
+.file-details { flex: 1; min-width: 0; }
+.file-name, .file-context { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-name { font-size: 14px; line-height: 1.5; }
+.file-context { color: var(--fontcolor-ac); font-size: 12px; line-height: 1.5; margin-top: 4px; }
+.file-action { flex-shrink: 0; font-size: 13px; color: var(--fontcolor-ac); }
+.file-action span { font-size: 20px; margin-left: 6px; }
+.file-empty { padding: 24px; border-radius: 12px; background: var(--bg); color: var(--fontcolor-ac); }
+@media (max-width: 600px) {
+    .file-library { width: calc(100% - 40px); }
+    .file-library-heading { align-items: stretch; flex-direction: column; gap: 16px; }
+    .file-search { width: 100%; }
+    .file-entry { gap: 10px; padding: 12px; }
+    .file-format { flex-basis: 38px; }
+    .file-action { font-size: 0; }
+    .file-action span { font-size: 22px; }
+}

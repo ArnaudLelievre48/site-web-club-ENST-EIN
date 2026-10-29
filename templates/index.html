@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
                 <h1 class="title">Club ENST'EIN</h1>
-                <div class="cards-wrapper">
+                <div class="cards-wrapper" data-page="{{ page }}" data-pages="{{ pages }}">
                     {% if page > 1 %}
                     <a class="move-left" href="{{ url_for('home', page=page - 1) }}" aria-label="Présentations précédentes">&lt;</a>
                     {% else %}
                     <span class="move-left disabled" aria-hidden="true">&lt;</span>
                     {% endif %}
-                    <div class="cards">
+                    <div class="cards-viewport"><div class="cards">
                         {% for presentation in presentations %}
                         <a class="card{% if not (start <= loop.index0 < end) %} outside-page{% endif %}" href="{{ url_for('presentation_detail', academic_year=presentation.academic_year, slug=presentation.slug) }}" aria-labelledby="title-{{ loop.index }}">
                             <div class="card-thumbnail">
@@ -29,10 +29,32 @@
                         <p>Aucune présentation pour le moment.</p>
                         {% endfor %}
                     </div>
+                    </div>
                     {% if page < pages %}
                     <a class="move-right" href="{{ url_for('home', page=page + 1) }}" aria-label="Présentations suivantes">&gt;</a>
                     {% else %}
                     <span class="move-right disabled" aria-hidden="true">&gt;</span>
                     {% endif %}
                 </div>
+                <section class="file-library" id="downloads" aria-labelledby="downloads-title">
+                    <div class="file-library-heading">
+                        <h2 id="downloads-title">Tous les fichiers</h2>
+                        <form class="file-search" role="search" action="{{ url_for('home') }}#downloads" method="get"
+                              hx-get="{{ url_for('home') }}" hx-target="#file-results" hx-swap="innerHTML"
+                              hx-trigger="input changed delay:300ms from:#file-search, submit" hx-sync="this:replace"
+                              hx-indicator="#file-search-status">
+                            <input type="hidden" name="page" value="{{ page }}">
+                            <label for="file-search">Rechercher un fichier</label>
+                            <div class="file-search-controls">
+                                <input id="file-search" type="search" name="q" value="{{ query }}" maxlength="200"
+                                       placeholder="Titre, intervenant, nom de fichier…" aria-controls="file-results">
+                                <button type="submit">Rechercher</button>
+                            </div>
+                            <span id="file-search-status" class="htmx-indicator" role="status">Recherche…</span>
+                        </form>
+                    </div>
+                    <div id="file-results">{% include "_download_list.html" %}</div>
+                </section>
 {% endblock %}
+
+{% block scripts %}<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js" integrity="sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg" crossorigin="anonymous" defer></script><script src="{{ url_for('static', filename='carousel.js') }}" defer></script>{% endblock %}

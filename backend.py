@@ -2,11 +2,14 @@
 
 import json
 import re
+import subprocess
+import unicodedata
+from tempfile import TemporaryDirectory
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, make_response, render_template, request, url_for
 
 app = Flask(__name__)
 FILES_DIR = Path(app.static_folder) / "files"
@@ -21,6 +24,40 @@ SUPPORTS = (
     ("slides.pptx", "PowerPoint", True),
     ("instagram.mp4", "Vidéo de présentation", False),
 )
+
+
+DOWNLOAD_EXTENSIONS = {
+    ".pdf", ".ppt", ".pptx", ".odp", ".html", ".mp4", ".webm", ".zip",
+    ".txt", ".csv", ".ipynb", ".py", ".doc", ".docx", ".odt", ".xls", ".xlsx", ".ods",
+}
+
+
+def search_text(value):
+    return "".join(character for character in unicodedata.normalize("NFKD", value.casefold())
+                   if not unicodedata.combining(character))
+
+
+def downloadable_files(catalogue, query):
+    """Liste les supports et documents annexes des présentations publiées."""
+    terms = search_text(query).split()
+    files = []
+    for presentation in catalogue:
+        directory = FILES_DIR / presentation["academic_year"] / presentation["slug"]
+        for path in sorted(directory.iterdir()):
+            if not path.is_file() or path.name.startswith(".") or path.suffix.lower() not in DOWNLOAD_EXTENSIONS:
+                continue
+            searchable = search_text(" ".join([
+                path.name, presentation["title"], presentation["speaker"],
+                presentation["academic_year"], *presentation["tags"],
+            ]))
+            if all(term in searchable for term in terms):
+                files.append({
+                    "name": path.name,
+                    "filename": path.relative_to(app.static_folder).as_posix(),
+                    "format": path.suffix[1:].upper(),
+                    "presentation": presentation,
+                })
+    return files
 
 
 def youtube_video_id(video):
@@ -44,6 +81,33 @@ def youtube_video_id(video):
 def youtube_thumbnail(video):
     video_id = youtube_video_id(video)
     return f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" if video_id else None
+
+
+def pdf_thumbnail(directory):
+    """Génère et met en cache la première page du PDF quand nécessaire."""
+    pdf = next((directory / name for name in ("slides.pdf", "slides-pdf.pdf")
+                if (directory / name).is_file()), None)
+    if pdf is None:
+        return None
+    thumbnail = pdf.with_name(f"{pdf.stem}-thumbnail.png")
+    try:
+        if not thumbnail.is_file() or thumbnail.stat().st_mtime_ns < pdf.stat().st_mtime_ns:
+            # Publier uniquement une image complète, même avec plusieurs workers.
+            with TemporaryDirectory(prefix=".thumbnail-", dir=directory) as temporary:
+                output = Path(temporary) / "first-slide"
+                subprocess.run(
+                    ["pdftoppm", "-f", "1", "-singlefile", "-scale-to", "960",
+                     "-png", str(pdf), str(output)],
+                    check=True, timeout=30, capture_output=True,
+                )
+                output.with_suffix(".png").replace(thumbnail)
+        return url_for(
+            "static", filename=thumbnail.relative_to(app.static_folder).as_posix(),
+            v=thumbnail.stat().st_mtime_ns,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        app.logger.warning("Miniature PDF indisponible (%s) : %s", pdf, exc)
+        return None
 
 
 def load_presentations():
@@ -86,7 +150,7 @@ def load_presentations():
                 "summary": data["summary"], "speaker_year": data.get("annee"),
                 "description": description,
                 "tags": tags, "video": video, "supports": supports,
-                "thumbnail": youtube_thumbnail(video),
+                "thumbnail": youtube_thumbnail(video) or pdf_thumbnail(directory),
                 "video_embed": f"https://www.youtube-nocookie.com/embed/{video_id}" if video_id else None,
                 "academic_year": directory.parent.name, "date": date,
                 "date_label": f"{date.day} {MONTHS[date.month - 1]} {date.year}",
@@ -100,13 +164,18 @@ def load_presentations():
 def home():
     catalogue = load_presentations()
     per_page = 3
-    pages = max(1, (len(catalogue) + per_page - 1) // per_page)
+    pages = max(1, (max(0, len(catalogue) - per_page) + 1) // 2 + 1)
     page = min(max(request.args.get("page", 1, type=int), 1), pages)
-    start = (page - 1) * per_page
-    return render_template(
-        "index.html", presentations=catalogue,
+    start = min((page - 1) * 2, max(0, len(catalogue) - per_page))
+    query = request.args.get("q", "").strip()[:200]
+    template = "_download_list.html" if request.headers.get("HX-Request") == "true" else "index.html"
+    response = make_response(render_template(
+        template, presentations=catalogue,
         page=page, pages=pages, start=start, end=start + per_page,
-    )
+        files=downloadable_files(catalogue, query), query=query,
+    ))
+    response.vary.add("HX-Request")
+    return response
 
 
 @app.get("/presentations/<academic_year>/<slug>")

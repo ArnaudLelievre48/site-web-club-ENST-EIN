@@ -1,0 +1,19 @@
+<p class="file-count" role="status">{{ files | length }} fichier{{ 's' if files | length != 1 else '' }}{% if query %} pour « {{ query }} »{% endif %}</p>
+{% if files %}
+<ul class="file-list" tabindex="0" aria-label="Fichiers téléchargeables">
+    {% for file in files %}
+    <li>
+        <a class="file-entry" href="{{ url_for('static', filename=file.filename) }}" download>
+            <span class="file-format">{{ file.format }}</span>
+            <span class="file-details">
+                <span class="file-name" title="{{ file.name }}">{{ file.name }}</span>
+                <span class="file-context" title="{{ file.presentation.title }} · {{ file.presentation.speaker }}">{{ file.presentation.title }} · {{ file.presentation.speaker }} · {{ file.presentation.academic_year }}</span>
+            </span>
+            <span class="file-action">Télécharger <span aria-hidden="true">↓</span></span>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="file-empty">{% if query %}Aucun fichier ne correspond à votre recherche.{% else %}Aucun fichier disponible pour le moment.{% endif %}</p>
+{% endif %}

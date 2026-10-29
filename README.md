@@ -43,8 +43,15 @@ avec un fichier `presentation.json` :
 `annee` désigne l'année d'études de l'intervenant. L'année universitaire est
 déduite du dossier parent. `video` peut contenir une URL HTTP(S) de la conférence.
 Pour une vidéo YouTube, sa miniature est affichée directement depuis YouTube
-(liens `watch`, `youtu.be`, `embed`, `shorts` et `live`). Sans vidéo YouTube,
-l'emplacement conserve le fond uni d'origine.
+(liens `watch`, `youtu.be`, `embed`, `shorts` et `live`). Sans miniature YouTube,
+la première page de `slides.pdf` (ou, à défaut, `slides-pdf.pdf`) sert de miniature.
+L'image PNG est générée automatiquement au premier chargement, puis mise en cache
+à côté du PDF dans `slides-thumbnail.png` (ou `slides-pdf-thumbnail.png`). Elle est
+régénérée si le PDF est plus récent. Le processus Flask doit pouvoir écrire dans
+le dossier de la présentation. Sans PDF exploitable, le fond uni est conservé.
+
+La génération nécessite `pdftoppm`, fourni par Poppler : `sudo pacman -S poppler`
+sous Arch Linux ou `sudo apt install poppler-utils` sous Debian/Ubuntu.
 Les présentations sont triées de la plus récente à la plus ancienne ; seules
 celles avec `published: true` sont affichées. Un JSON invalide est ignoré et
 signalé dans les logs Flask.
@@ -80,3 +87,18 @@ Le PDF apparaît automatiquement au prochain chargement de la page.
 
 Les fichiers dans `static/` sont publics, y compris ceux des présentations
 masquées avec `published: false` : ce champ contrôle l'affichage du catalogue.
+
+## Rechercher et télécharger les fichiers
+
+Sous les présentations, une liste regroupe les supports et documents annexes
+(PDF, présentations, vidéos, archives, documents et code) présents directement
+dans chaque dossier de présentation publiée. Les métadonnées, les miniatures et
+les ressources graphiques sont exclues. Dix lignes sont visibles au maximum ;
+les suivantes sont accessibles par défilement.
+
+La recherche filtre le nom du fichier, le titre, l’intervenant, l’année et les tags,
+sans distinction de casse ni d’accents. Tous les mots saisis doivent correspondre.
+[HTMX](https://htmx.org/docs/) 2.0.11, chargé depuis jsDelivr, actualise uniquement
+les résultats après 300 ms de pause dans la saisie. Le formulaire GET (`q`) reste
+utilisable avec son bouton si JavaScript est indisponible. La route `/` renvoie
+le fragment de résultats pour `HX-Request: true`, et la page entière sinon.
