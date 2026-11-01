@@ -248,7 +248,7 @@ a:focus-visible, .card:focus-visible {
 /* Sans JavaScript, le catalogue reste accessible par défilement. */
 @media (max-width: 1000px) {
     .title { min-height: auto; margin: 24px 0; }
-    .cards-wrapper { align-items: flex-start; width: 85%; padding: 0 20px 24px; }
+    .cards-wrapper { align-items: flex-start; width: 90%; padding: 0 20px 24px; }
     .move-left, .move-right { display: none; }
     .cards-viewport { width: 100%; height: auto; overflow: visible; }
     .cards { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
