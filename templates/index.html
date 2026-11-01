@@ -1,7 +1,32 @@
 {% extends "base.html" %}
+{% block head_scripts %}<script src="{{ url_for('static', filename='home-scroll.js') }}"></script>{% endblock %}
 {% block content %}
                 <h1 class="title">Club ENST'EIN</h1>
-                <div class="cards-wrapper" data-page="{{ page }}" data-pages="{{ pages }}">
+                <nav class="home-nav" aria-label="Sur cette page">
+                    <a href="#presentations">Les présentations</a>
+                    <a href="#downloads">Les fichiers</a>
+                    <a href="#qui-sommes-nous">Qui sommes-nous ?</a>
+                </nav>
+                <section class="about-club" id="qui-sommes-nous" aria-labelledby="about-title">
+                    <details>
+                        <summary>
+                            <h2 id="about-title">Qu'est-ce que "ENST'EIN" ?</h2>
+                            <svg class="about-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg>
+                        </summary>
+                        <div class="about-content">
+                            <div class="about-description">
+                                <p>ENST'EIN est un club de l’ENSTA, sur le campus de Brest. Le club permet aux étudiants de présenter des sujets qui les passionnent aux autres ENSTAsiens. Les sujets, bien que souvent scientifiques, peuvent être de toute nature. On encourage souvent les A1 à venir présenter leurs TIPE qui sont souvent de vraies pépites ! Des anciens élèves qui repassent sur Brest viennent aussi des fois nous parler de ce sur quoi ils travaillent.</p>
+                            </div>
+                            <div class="about-contacts">
+                                <h3>Contacts</h3>
+                                <p>Pour proposer un sujet ou nous poser une question : <a href="mailto:ENSTein.brest@ensta.fr">ENSTein.brest@ensta.fr</a></p>
+                                <p>Vous pouvez aussi directement me contacter (Arnaud Lelièvre, prez 26-27) : <a href="mailto:arnaud.lelievre@ensta.fr">arnaud.lelievre@ensta.fr</a></p>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <div class="cards-wrapper" id="presentations" data-page="{{ page }}" data-pages="{{ pages }}">
                     {% if page > 1 %}
                     <a class="move-left" href="{{ url_for('home', page=page - 1) }}" aria-label="Présentations précédentes">&lt;</a>
                     {% else %}
@@ -57,4 +82,4 @@
                 </section>
 {% endblock %}
 
-{% block scripts %}<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js" integrity="sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg" crossorigin="anonymous" defer></script><script src="{{ url_for('static', filename='carousel.js') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js" integrity="sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg" crossorigin="anonymous" defer></script><script src="{{ url_for('static', filename='carousel.js') }}" defer></script><script src="{{ url_for('static', filename='script.js') }}" defer></script>{% endblock %}

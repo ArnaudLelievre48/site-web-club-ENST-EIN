@@ -90,6 +90,7 @@ a:focus-visible, .card:focus-visible {
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    scroll-behavior: smooth;
     overscroll-behavior-y: contain;
     background: var(--bgac);
     border-radius: 2vw;
@@ -100,6 +101,27 @@ a:focus-visible, .card:focus-visible {
 }
 
 .main-inner > * { flex-shrink: 0; }
+
+.home-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    max-width: 100%;
+    padding: 0 20px;
+    margin-bottom: 24px;
+}
+.home-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--fontcolor-ac);
+    font-size: 14px;
+    text-decoration: none;
+    text-underline-offset: 5px;
+}
+.home-nav a:hover { color: var(--fontcolor-fg); text-decoration: underline; }
+#presentations, #downloads, #qui-sommes-nous { scroll-margin-top: 24px; }
 
 .title {
     margin: 3vh 0;
@@ -208,8 +230,8 @@ a:focus-visible, .card:focus-visible {
     .logo { width: 58px; height: 58px; margin: 0; }
     .links { flex-direction: row; justify-content: flex-end; gap: 16px; }
     .links a { width: 42px; height: 42px; margin: 0; }
-    .main { width: 100%; height: auto; flex: 1; padding: 12px; }
-    .main-inner { border-radius: 20px; }
+    .main { width: 100%; height: auto; flex: 1; padding: 12px; margin-bottom: 1%; }
+    .main-inner { border-radius: 20px; width: 95%; margin-left: 2.5%; }
 }
 
 /* Barre latérale compacte pour les téléphones en paysage. */
@@ -226,7 +248,7 @@ a:focus-visible, .card:focus-visible {
 /* Sans JavaScript, le catalogue reste accessible par défilement. */
 @media (max-width: 1000px) {
     .title { min-height: auto; margin: 24px 0; }
-    .cards-wrapper { align-items: flex-start; width: 100%; padding: 0 20px 24px; }
+    .cards-wrapper { align-items: flex-start; width: 85%; padding: 0 20px 24px; }
     .move-left, .move-right { display: none; }
     .cards-viewport { width: 100%; height: auto; overflow: visible; }
     .cards { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
@@ -245,6 +267,7 @@ a:focus-visible, .card:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .main-inner { scroll-behavior: auto; }
     * { transition: none !important; }
 }
 
@@ -356,7 +379,35 @@ a.card { text-decoration: none; }
 .file-action { flex-shrink: 0; font-size: 13px; color: var(--fontcolor-ac); }
 .file-action span { font-size: 20px; margin-left: 6px; }
 .file-empty { padding: 24px; border-radius: 12px; background: var(--bg); color: var(--fontcolor-ac); }
+
+/* Présentation du club. */
+.about-club {
+    width: calc(100% - 6vw);
+    margin: 0 0 40px;
+    padding-top: 28px;
+    border-top: 1px solid #90abd626;
+}
+.about-club summary { display: flex; align-items: center; gap: 16px; min-height: 44px; padding: 6px 0; cursor: pointer; list-style: none; font-size: clamp(22px, 2vw, 30px); }
+.about-club summary::-webkit-details-marker { display: none; }
+.about-club summary:focus-visible { outline: 2px solid var(--fontcolor-ac); outline-offset: 5px; }
+.about-club h2 { min-width: 0; margin: 0; font-size: inherit; }
+.about-arrow { flex: 0 0 1em; width: 1em; height: 1em; transition: transform .28s ease; }
+.about-club details[open]:not(.is-closing) .about-arrow { transform: rotate(180deg); }
+.about-club details.is-animating { overflow: hidden; }
+.about-content { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 60px); padding: 20px 0 clamp(32px, 4vw, 56px); }
+.about-content > div { min-width: 0; }
+.about-contacts h3 { margin: 0; font-size: 16px; }
+.about-club p { max-width: 75ch; margin: 12px 0 0; color: var(--fontcolor-ac); font-size: 15px; line-height: 1.7; }
+.about-description p { margin-top: 0; }
+.about-club a { overflow-wrap: anywhere; text-underline-offset: 4px; }
+.about-club a:hover { color: var(--fontcolor-fg); }
+@media (max-width: 800px) {
+    .about-content { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 600px) {
+    .home-nav { gap: 4px 16px; margin-bottom: 16px; }
+    .home-nav a { font-size: 13px; }
+    .about-club { width: calc(100% - 40px); }
     .file-library { width: calc(100% - 40px); }
     .file-library-heading { align-items: stretch; flex-direction: column; gap: 16px; }
     .file-search { width: 100%; }

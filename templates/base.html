@@ -6,6 +6,7 @@
         <title>{% block title %}Club ENST'EIN{% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <link rel="icon" href="{{ url_for('static', filename='club-enst-ein-logo.png') }}">
+        {% block head_scripts %}{% endblock %}
     </head>
     <body>
         <aside class="left-panel" aria-label="Le club">
