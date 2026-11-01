@@ -230,8 +230,8 @@ a:focus-visible, .card:focus-visible {
     .logo { width: 58px; height: 58px; margin: 0; }
     .links { flex-direction: row; justify-content: flex-end; gap: 16px; }
     .links a { width: 42px; height: 42px; margin: 0; }
-    .main { width: 100%; height: auto; flex: 1; padding: 12px; margin-bottom: 1%; }
-    .main-inner { border-radius: 20px; width: 95%; margin-left: 2.5%; }
+    .main { width: 100%; height: auto; flex: 1; padding: 12px; margin-bottom: 0.3%; }
+    .main-inner { border-radius: 20px; width: 98%; margin-left: 1%; }
 }
 
 /* Barre latérale compacte pour les téléphones en paysage. */
